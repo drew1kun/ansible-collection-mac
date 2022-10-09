@@ -1,0 +1,30 @@
+---
+# tasks file for terminal_app.yml
+
+- name: '[terminal_app] Make sure Terminal app is not running'
+  shell: pgrep Terminal && killall Terminal && sleep 10 || echo 'Terminal_app_NOT_STARTED'
+  register: macterm_app_pkill
+  changed_when: "'Terminal_app_NOT_STARTED' not in macterm_app_pkill.stdout"
+  tags: macterm
+
+- name: '[terminal_app] Copy Terminal app preferences'
+  copy:
+    src: "{{ macterm_colorscheme }}/com.apple.Terminal.plist"
+    dest: ~/Library/Preferences/
+    owner: "{{ ansible_user_id }}"
+    group: staff
+    mode: 0600
+  tags: macterm
+
+#  - defaults write com.apple.Terminal 'Default Window Settings' -string 'Solarized_Dark_custom'
+- name: '[terminal_app] Ensure {{ macterm_colorscheme }} profile is set as default'
+  osx_defaults:
+    domain: com.apple.Terminal
+    state: present
+    key: "{{ item }}"
+    type: string
+    value: "{{ macterm_colorscheme }}"
+  with_items:
+    - 'Default Window Settings'
+    - 'Startup Window Settings'
+  tags: macterm

@@ -1,0 +1,15 @@
+---
+# tasks file for ansible-macdock
+
+- name: "[macdock] Import tasks from look.yml"
+  import_tasks: look.yml
+  tags:
+    - macdock
+    - macdock_look
+
+- name: "[macdock] Import tasks from defaults.yml"
+  import_tasks: defaults.yml
+  tags:
+    - macdock
+    - macdock_defaults
+

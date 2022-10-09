@@ -1,0 +1,41 @@
+---
+# tasks file for iTerm2.yml
+
+- name: '[iTerm2] Ensure iTerm2 is installed using Homebrew Cask'
+  community.general.homebrew_cask:
+    name: iterm2
+    state: present
+    #install_options: "appdir= ~/Applications"
+  register: macterm_iterm2_result
+  until: macterm_iterm2_result is succeeded
+  when: macterm_iterm2
+  tags:
+    - macterm
+    - macterm_iterm2
+
+- name: '[iTerm2] Make sure iTerm2 is not running'
+  shell: pgrep iTerm2 && killall iTerm2 && sleep 10 || echo 'iTerm2_NOT_STARTED'
+  register: macterm_pkill
+  changed_when: "'iTerm2_NOT_STARTED' not in macterm_pkill.stdout"
+  when: macterm_iterm2
+  tags:
+    - macterm
+    - macterm_iterm2
+
+- name: '[iTerm2] Copy iTerm2 preferences'
+  copy:
+    src: "{{ macterm_colorscheme }}/com.googlecode.iterm2.plist"
+    dest: ~/Library/Preferences/
+    owner: "{{ ansible_user_id }}"
+    group: staff
+    mode: 0600
+  when: macterm_iterm2
+  notify: Read new iTerm profile after copying
+  tags:
+    - macterm
+    - macterm_iterm2
+
+- meta: flush_handlers
+  tags:
+    - macterm
+    - macterm_iterm2

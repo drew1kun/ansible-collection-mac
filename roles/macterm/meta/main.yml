@@ -1,0 +1,20 @@
+galaxy_info:
+  role_name: macterm
+  author: Andrew Shagayev
+  description: Configure the terminal to use Solarized Colorscheme, Nerdfonts and Terminus powerline fonts
+  license: MIT
+  min_ansible_version: 1.2
+  github_branch: master
+  platforms:
+    - name: MacOSX
+      versions:
+        - all
+  galaxy_tags:
+    - macos
+    - osx
+    - terminal
+    - iterm2
+    - workstation
+dependencies:
+  - { role: drew1kun.fancyfonts.terminus_powerline, when: macterm_iterm2 }
+  - drew1kun.fancyfonts.nerdfonts

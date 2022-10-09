@@ -1,0 +1,44 @@
+{% if pf_macros != None %}
+#====== MACROS start =====#
+{{ pf_macros }}
+#======= MACROS end ======#
+
+
+{% endif %}
+{% if pf_tables != None %}
+#====== TABLES start =====#
+{{ pf_tables }}
+#======= TABLES end ======#
+
+
+{% endif %}
+{% if pf_options != None %}
+#===== OPTIONS start =====#
+{{ pf_options }}
+#====== OPTIONS end ======#
+
+
+{% endif %}
+{% if pf_normalization != None %}
+#=== NORMLIZATION start ==#
+{{ pf_normalization }}
+#==== NORMLIZATION end ===#
+
+
+{% endif %}
+{% if pf_queueing != None %}
+#==== QUEUEING start =====#
+{{ pf_queueing }}
+#===== QUEUEING end ======#
+
+
+{% endif %}
+{#
+TRANSLATION is moved to {{ pf_prefix }}.rdr.rules anchor for flexibility,
+because the redirect anchors must go first
+#}
+{% if pf_filtering != None %}
+#==== FILTERING start ====#
+{{ pf_filtering }}
+#===== FILTERING end =====#
+{% endif %}

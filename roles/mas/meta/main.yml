@@ -1,0 +1,22 @@
+---
+galaxy_info:
+  role_name: mas
+  author: drew1kun (forked from geerlingguy.mas)
+  description: Ansible role for installing the apps from MacOS App Store.
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.4
+  platforms:
+    - name: GenericUNIX
+      versions:
+        - all
+        - any
+  galaxy_tags:
+    - development
+    - system
+    - packaging
+    - mas
+    - mac
+    - appstore
+    - macos
+    - osx
+    - workstation
