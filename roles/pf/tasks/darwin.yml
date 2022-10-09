@@ -52,7 +52,11 @@
 # This check is required unconditionally.
 # Even if no files were changed, pf can still be disabled, so we should enable it in this case.
 - name: '[Darwin] Check if {{ pf_prefix }} launchd jobs are loaded (yellow if not)'
-  shell: launchctl list | grep {{ pf_prefix }}
+  shell: |
+    set -o pipefail
+    launchctl list | grep {{ pf_prefix }}
+  args:
+    executable: /bin/bash
   become: true
   register: pf_launchd_job
   failed_when: false

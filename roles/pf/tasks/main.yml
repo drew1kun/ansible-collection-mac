@@ -85,5 +85,6 @@
   when: pf_translation != None
   tags: pf
 
-- meta: flush_handlers
+- name: "[main] Flush all handlers"
+  meta: flush_handlers
   tags: pf

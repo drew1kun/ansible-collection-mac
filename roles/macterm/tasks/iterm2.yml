@@ -35,7 +35,8 @@
     - macterm
     - macterm_iterm2
 
-- meta: flush_handlers
+- name: '[iTerm2] Flush all handlers'
+  meta: flush_handlers
   tags:
     - macterm
     - macterm_iterm2
