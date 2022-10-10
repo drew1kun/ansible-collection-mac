@@ -16,7 +16,7 @@ The roles included:
 ## Installation
 
 **NOTE:**
-[drew1kun.fancyfonts][fancyfonts-collection-link] collection contains the dependency roles for `drew1kun.macterm` role. 
+[drew1kun.fancyfonts][fancyfonts-collection-link] collection contains the dependency roles for `drew1kun.macterm` role.
 
 Additionally **[optional]**, check out [drew1kun.slickshell][slickshell-collection-link]
 
@@ -59,7 +59,6 @@ Example of the play:
   collections:
   - drew1kun.mac
   roles:
-    - homebrew
     - mas
     - macdock
     - macterm
