@@ -9,7 +9,7 @@
 # Alternatively, single-user mode can be used.
 
 # sudo: auth account password session
-auth       optional       {{ macsetup_brew_prefix.stdout }}/lib/pam/pam_reattach.so
+auth       optional       {{ macterm_brew_prefix.stdout }}/lib/pam/pam_reattach.so
 auth       sufficient     pam_tid.so
 auth       sufficient     pam_smartcard.so
 auth       required       pam_opendirectory.so
