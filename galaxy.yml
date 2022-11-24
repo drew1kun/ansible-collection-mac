@@ -1,6 +1,6 @@
 namespace: drew1kun
 name: mac
-version: 1.0.3
+version: 1.0.4
 readme: README.md
 authors:
 - Andrew Shagayev <drew-kun@protonmail.com>
@@ -14,6 +14,12 @@ tags:
   - osx
   - development
   - workstation
+  - mas
+  - terminal
+  - iterm2
+  - dock
+  - pf
+  - refind
 
 #dependencies:
 #  community.general: ">=3.0.0"

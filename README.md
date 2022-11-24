@@ -12,6 +12,7 @@ The roles included:
   - `drew1kun.mac.macdock` ([doc](https://github.com/drew1kun/ansible-collection-mac/blob/main/roles/macdock/README.md))
   - `drew1kun.mac.macterm` ([doc](https://github.com/drew1kun/ansible-collection-mac/blob/main/roles/macterm/README.md))
   - `drew1kun.mac.pf` ([doc](https://github.com/drew1kun/ansible-collection-mac/blob/main/roles/pf/README.md))
+  - `drew1kun.mac.refind` ([doc](https://github.com/drew1kun/ansible-collection-mac/blob/main/roles/refind/README.md))
 
 ## Installation
 

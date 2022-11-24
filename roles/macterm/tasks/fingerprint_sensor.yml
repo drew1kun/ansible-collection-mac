@@ -1,12 +1,13 @@
 ---
 # tasks file for fingerprint_sensor.yml
 
-- name: '[fingerprint] Ensure custom pam-reattach module is installed (works with iTerm2 & Tmux)'
+# PAM and sudo using fingerprint
+- name: '[fingerprint] Install packages: pinentry-mac, pinentry-touchid (gpg passphrases with fingerprint); custom pam-reattach module (sudo with FP sensor, works with iTerm2 & Tmux)'
   community.general.homebrew:
     name: pam-reattach
     state: present
-  register: macterm_pam_install_result
-  until: macterm_pam_install_result is succeeded
+  register: macterm_pam_install
+  until: macterm_pam_install is succeeded
   tags:
     - macterm_fingerprint
     - macterm
@@ -29,6 +30,48 @@
     mode: 0444
   become: true
   when: macterm_pam_reattach_so.stat.exists
+  tags:
+    - macterm_fingerprint
+    - macterm
+
+# GPG and pinentry using fingerprint
+- name: '[fingerprint] Install packages: pinentry-mac, pinentry-touchid (gpg passphrases with fingerprint)'
+  community.general.homebrew:
+    name: "{{ package }}"
+    state: present
+  register: macterm_package_install
+  until: macterm_package_install is succeeded
+  notify:
+  - Fix pinentry symlinks
+  - Reload gpg-agent
+  loop:
+    - pinentry-mac
+    - jorgelbg/tap/pinentry-touchid
+  loop_control:
+    loop_var: package
+  tags:
+    - macterm_fingerprint
+    - macterm
+
+- name: '[fingerprint] Configure ~/.gnupg/gpg-agent.conf according to brew info pinentry-touchid'
+  ansible.builtin.lineinfile:
+    path: ~/.gnupg/gpg-agent.conf
+    regexp: '^pinentry-program '
+    line: "pinentry-program {{ macterm_brew_prefix.stdout }}/bin/pinentry-touchid"
+  notify:
+  - Fix pinentry symlinks
+  - Reload gpg-agent
+  tags:
+    - macterm_fingerprint
+    - macterm
+
+- name: '[fingerprint] Disable "Save in Keychain" in pinentry-mac for pinentry-touchid to work'
+  community.general.osx_defaults:
+    domain: org.gpgtools.common
+    key: DisableKeychain
+    type: bool
+    value: true
+    state: present
   tags:
     - macterm_fingerprint
     - macterm
