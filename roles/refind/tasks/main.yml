@@ -62,4 +62,7 @@
   copy:
     src: refind.conf
     dest: /Volumes/ESP/EFI/refind/
+    mode: 0644
+    owner: "{{ ansible_user_id }}"
+    group: staff
   tags: refind
