@@ -2,7 +2,7 @@
 # tasks file for fingerprint_sensor.yml
 
 # PAM and sudo using fingerprint
-- name: '[fingerprint] Install packages: pinentry-mac, pinentry-touchid (gpg passphrases with fingerprint); custom pam-reattach module (sudo with FP sensor, works with iTerm2 & Tmux)'
+- name: '[fingerprint] Install pam-reattach custom pam-reattach module (sudo with FP sensor, works with iTerm2 & Tmux)'
   community.general.homebrew:
     name: pam-reattach
     state: present
