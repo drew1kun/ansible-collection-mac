@@ -2,13 +2,13 @@
 # tasks file for ansible-mas
 
 - name: '[mas] Ensure MAS is installed'
-  homebrew: name=mas state=present
+  community.general.homebrew: name=mas state=present
   register: mas_istall_result
   until: mas_istall_result is succeeded
   tags: mas
 
 - name: '[mas] Get correct brew prefix'
-  command: 'brew --prefix'
+  ansible.builtin.command: 'brew --prefix'
   environment:
     PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
   register: mas_brew_prefix
@@ -16,7 +16,7 @@
   tags: mas
 
 - name: '[mas] Get MAS account status'
-  command: "{{ mas_brew_prefix.stdout }}/bin/mas account"
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas account"
   register: mas_account_result
   failed_when: mas_account_result.rc > 1
   check_mode: false
@@ -27,7 +27,7 @@
 # Unfortunately having this issue (Hope it will be fixed soon):
 # https://github.com/mas-cli/mas/issues/164
 - name: '[mas] Sign in to MAS when email and password are provided'
-  command: "{{ mas_brew_prefix.stdout }}/bin/mas signin {{ mas_email }} {{ mas_password }}"
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas signin {{ mas_email }} {{ mas_password }}"
   register: mas_signin_result
   when:
     - ansible_distribution_version is version('10.13', '<')
@@ -38,7 +38,7 @@
   tags: mas
 
 - name: '[mas] Sign in to MAS when email is provided, and complete password and 2FA using dialog.'
-  command: "{{ mas_brew_prefix.stdout }}/bin/mas signin {{ mas_email }} {{ mas_password }} --dialog"
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas signin {{ mas_email }} {{ mas_password }} --dialog"
   register: mas_signin_result
   when:
     - ansible_distribution_version is version('10.13', '<')
@@ -48,14 +48,14 @@
   tags: mas
 
 - name: '[mas] List installed MAS apps'
-  command: "{{ mas_brew_prefix.stdout }}/bin/mas list"
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas list"
   register: mas_list
   check_mode: false
   changed_when: false
   tags: mas
 
 - name: '[mas] Ensure configured MAS apps are installed'
-  command: "{{ mas_brew_prefix.stdout }}/bin/mas install {{ item.id|default(item) }}"
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas install {{ item.id|default(item) }}"
   with_items: "{{ mas_installed_apps }}"
   when: (item.id | default(item) | string) not in mas_list.stdout
   tags: mas
@@ -71,7 +71,7 @@
 #    PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
 
 - name: '[mas] Upgrade all apps (if configured)'
-  command: "{{ mas_brew_prefix.stdout }}/bin/mas upgrade"
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas upgrade"
   when: mas_upgrade_all_apps
   tags: mas
 
@@ -101,7 +101,7 @@
   tags: mas
 
 - name: '[mas] Run assembled command'
-  command: "{{ 'softwareupdate ' + mas_macos_softwareupdate_action + ' ' + mas_macos_softwareupdate_updates }}"
+  ansible.builtin.command: "{{ 'softwareupdate ' + mas_macos_softwareupdate_action + ' ' + mas_macos_softwareupdate_updates }}"
   register: softwareupdate_assembled
   changed_when:
   - softwareupdate_assembled.rc != 0

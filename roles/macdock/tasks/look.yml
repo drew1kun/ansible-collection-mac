@@ -10,7 +10,7 @@
   until: macdock_dockutils_result is successful
 
 - name: "[macdock_look] Get info about items to be removed"
-  command: "/usr/local/bin/dockutil --find '{{ item }}'"
+  ansible.builtin.command: "/usr/local/bin/dockutil --find '{{ item }}'"
   register: macdock_items_remove
   with_items: "{{ macdock_remove_items }}"
   changed_when: false
@@ -22,7 +22,7 @@
     - macdock_look
 
 - name: "[macdock_look] Remove all dock items"
-  command: "/usr/local/bin/dockutil --remove all --no-restart"
+  ansible.builtin.command: "/usr/local/bin/dockutil --remove all --no-restart"
   register: macdock_removed_items_task
   when: macdock_items_remove_all|bool
   tags:
@@ -30,7 +30,7 @@
     - macdock_look
 
 - name: "[macdock_look] Remove all unwanted dock items"
-  command: "/usr/local/bin/dockutil --remove '{{ item.item }}' --no-restart"
+  ansible.builtin.command: "/usr/local/bin/dockutil --remove '{{ item.item }}' --no-restart"
   with_items: "{{ macdock_items_remove.results }}"
   loop_control:
     label: "{{ item.item }}"
@@ -43,7 +43,7 @@
     - macdock_look
 
 - name: "[macdock_look] Get information on initial setup"
-  command: "/usr/local/bin/dockutil --find '{{ item.name }}'"
+  ansible.builtin.command: "/usr/local/bin/dockutil --find '{{ item.name }}'"
   register: macdock_dockutil
   with_items: "{{ macdock_add_items }}"
   changed_when: false
@@ -54,7 +54,7 @@
     - macdock_look
 
 - name: "[macdock_look] Add items to dock"
-  command: "/usr/local/bin/dockutil \
+  ansible.builtin.command: "/usr/local/bin/dockutil \
           --add '{{ item.item.path }}' \
           --position {{ item.item.pos }} \
           --section {{ item.item.section | default('apps') }} \
@@ -69,7 +69,7 @@
     - macdock_look
 
 - name: "[macdock_look] Get information on configured setup"
-  command: "/usr/local/bin/dockutil --find '{{ item.name }}'"
+  ansible.builtin.command: "/usr/local/bin/dockutil --find '{{ item.name }}'"
   register: macdock_dockutil_current
   with_items: "{{ macdock_add_items }}"
   changed_when: false
@@ -80,7 +80,7 @@
     - macdock_look
 
 - name: "[macdock_look] Moving items"
-  command: "/usr/local/bin/dockutil --move '{{ item.item.name }}' --position {{ item.item.pos }} --no-restart"
+  ansible.builtin.command: "/usr/local/bin/dockutil --move '{{ item.item.name }}' --position {{ item.item.pos }} --no-restart"
   with_items: "{{ macdock_dockutil_current.results }}"
   loop_control:
     label: "{{ item.item }}"

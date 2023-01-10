@@ -5,7 +5,6 @@
   community.general.homebrew_cask:
     name: iterm2
     state: present
-    #install_options: "appdir= ~/Applications"
   register: macterm_iterm2_result
   until: macterm_iterm2_result is succeeded
   when: macterm_iterm2
@@ -14,7 +13,7 @@
     - macterm_iterm2
 
 - name: '[iTerm2] Make sure iTerm2 is not running'
-  shell: pgrep iTerm2 && killall iTerm2 && sleep 10 || echo 'iTerm2_NOT_STARTED'
+  ansible.builtin.shell: pgrep iTerm2 && killall iTerm2 && sleep 10 || echo 'iTerm2_NOT_STARTED'
   register: macterm_pkill
   changed_when: "'iTerm2_NOT_STARTED' not in macterm_pkill.stdout"
   when: macterm_iterm2
@@ -23,7 +22,7 @@
     - macterm_iterm2
 
 - name: '[iTerm2] Copy iTerm2 preferences'
-  copy:
+  ansible.builtin.copy:
     src: "{{ macterm_colorscheme }}/com.googlecode.iterm2.plist"
     dest: ~/Library/Preferences/
     owner: "{{ ansible_user_id }}"
@@ -36,7 +35,7 @@
     - macterm_iterm2
 
 - name: '[iTerm2] Flush all handlers'
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
   tags:
     - macterm
     - macterm_iterm2

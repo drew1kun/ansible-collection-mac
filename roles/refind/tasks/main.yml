@@ -13,27 +13,27 @@
   tags: refind
 
 - name: '[refind] Check if /usr/local/bin/mountesp binary exists'
-  stat:
+  ansible.builtin.stat:
     path: /usr/local/bin/mountesp
   register: refind_mountesp
   tags: refind
 
 - name: '[refind] Run refind-install OSX/Linux installation wrapper script'
-  command: "{{ refind_zip.dest | replace('.zip', '') }}/refind-install"
+  ansible.builtin.command: "{{ refind_zip.dest | replace('.zip', '') }}/refind-install"
   become: yes
   register: refind_install
   when: not refind_mountesp.stat.exists or refind_force_install
   tags: refind
 
 - name: '[refind] Check if /Volumes/ESP is mounted'
-  command: mount
+  ansible.builtin.command: mount
     warn=no  # Ugly, but must use '=' instead of ':'
   register: refind_mount
   changed_when: false
   tags: refind
 
 - name: '[refind] Mount ESP volume under /Volumes/ESP'
-  command: /usr/local/bin/mountesp
+  ansible.builtin.command: /usr/local/bin/mountesp
   register: refind_mountesp_result
   become: yes
   when:
@@ -59,7 +59,7 @@
   tags: refind
 
 - name: '[refind] Copy rEFInd config'
-  copy:
+  ansible.builtin.copy:
     src: refind.conf
     dest: /Volumes/ESP/EFI/refind/
     mode: 0644

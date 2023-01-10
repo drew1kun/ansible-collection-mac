@@ -13,7 +13,7 @@
     - macterm
 
 - name: '[fingerprint] Check if pam-reattach was correctly installed'
-  stat:
+  ansible.builtin.stat:
     path: "{{ macterm_brew_prefix.stdout }}/lib/pam/pam_reattach.so"
   register: macterm_pam_reattach_so
   tags:
@@ -21,7 +21,7 @@
     - macterm
 
 - name: '[fingerprint] Modify PAM config for sudo to make Fingerprint work with iTerm & Tmux'
-  template:
+  ansible.builtin.template:
     src: etc.pam.d.sudo.j2
     dest: /etc/pam.d/sudo
     backup: true

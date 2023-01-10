@@ -2,7 +2,7 @@
 # tasks file for ansible-macterm
 
 - name: '[main] Determine brew prefix'
-  command: 'brew --prefix'
+  ansible.builtin.command: 'brew --prefix'
   environment:
     PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
   register: macterm_brew_prefix
