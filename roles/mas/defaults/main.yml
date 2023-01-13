@@ -1,0 +1,21 @@
+---
+# defaults file for ansible-mas
+
+mas_email: ""
+
+mas_password: ""
+
+mas_installed_apps:
+  - {id: 497799835, name: "Xcode"}
+  - {id: 747648890, name: "Telegram"}
+  - {id: 1451685025, name: "Wireguard"}
+  - {id: 1503420154, name: "Server Plus"}
+  - {id: 1037126344, name: "Apple Configurator 2"}
+
+mas_upgrade_all_apps: false
+
+mas_signin_dialog: false
+
+mas_softwareupdate:
+  recommended: false
+  install: false

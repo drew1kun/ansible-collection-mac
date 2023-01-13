@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  role_name: pf
+  author: Andrew Shagayev
+  description: |
+    Ansible role that configures pf firewall creating custom anchors
+    including ssh bruteforce protection anchor and ETOpen ruleset anchor
+    for blocking the known attackers IPs.
+  license: MIT
+  min_ansible_version: 1.2
+  github_branch: master
+  platforms:
+    - name: MacOSX
+      versions:
+        - all
+  galaxy_tags:
+    - pfctl
+    - firewall
+    - macos
+    - osx

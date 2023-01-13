@@ -1,0 +1,40 @@
+---
+# tasks file for terminal_app.yml
+
+- name: '[terminal_app] Make sure Terminal app is not running'
+  ansible.builtin.shell: pgrep Terminal && killall Terminal && sleep 10 || echo 'Terminal_app_NOT_STARTED'
+  register: macterm_app_pkill
+  changed_when: "'Terminal_app_NOT_STARTED' not in macterm_app_pkill.stdout"
+  tags: macterm
+
+- name: '[iTerm2] Clone Terminal app profile from repo'
+  ansible.builtin.git:
+    repo: https://github.com/drew1kun/terminal_profiles.git
+    dest: /tmp/terminal_profiles
+    version: "{{ macterm_colorscheme | lower() }}"
+  register: macterm_term_profile_download
+  until: macterm_term_profile_download is succeeded
+  tags: macterm
+
+- name: '[iTerm2] Copy Terminal app profile'
+  ansible.builtin.copy:
+    src: /tmp/terminal_profiles/com.apple.Terminal.plist
+    dest: ~/Library/Preferences/
+    owner: "{{ ansible_user_id }}"
+    group: staff
+    mode: 0600
+    remote_src: true
+  tags: macterm
+
+#  - defaults write com.apple.Terminal 'Default Window Settings' -string 'Solarized_Dark_custom'
+- name: '[terminal_app] Ensure {{ macterm_colorscheme }} profile is set as default'
+  community.general.osx_defaults:
+    domain: com.apple.Terminal
+    state: present
+    key: "{{ item }}"
+    type: string
+    value: "{{ macterm_colorscheme }}"
+  with_items:
+    - 'Default Window Settings'
+    - 'Startup Window Settings'
+  tags: macterm

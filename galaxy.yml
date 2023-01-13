@@ -1,0 +1,33 @@
+namespace: drew1kun
+name: mac
+version: 1.0.8
+readme: README.md
+authors:
+- Andrew Shagayev <drew-kun@protonmail.com>
+description: Ansible Collection of roles for programmatic MacOS workstation configuration.
+
+# The path to the license file for the collection. This path is relative to the root of the collection. This key is
+# mutually exclusive with 'license'
+license_file: 'LICENSE'
+tags:
+  - macos
+  - osx
+  - development
+  - workstation
+  - mas
+  - terminal
+  - iterm2
+  - dock
+  - pf
+  - refind
+
+#dependencies:
+#  community.general: ">=3.0.0"
+
+repository: https://github.com/drew1kun/ansible-collection-mac.git
+documentation: https://github.com/drew1kun/ansible-collection-mac/blob/main/README.md
+homepage: https://github.com/drew1kun/ansible-collection-mac
+issues: https://github.com/drew1kun/ansible-collection-mac/issues
+
+build_ignore:
+- '*.tar.gz'

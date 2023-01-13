@@ -1,0 +1,7 @@
+#====== TABLES start =====#
+table <emerging_threats> persist file "/etc/emerging-Block-IPs.txt"
+#======= TABLES end ======#
+
+#==== FILTERING start ====#
+block log from <emerging_threats> to any
+#===== FILTERING end =====#

@@ -1,0 +1,28 @@
+---
+# tasks file for ansible-macterm
+
+- name: '[main] Determine brew prefix'
+  ansible.builtin.command: 'brew --prefix'
+  environment:
+    PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
+  register: macterm_brew_prefix
+  changed_when: false
+  tags: macterm
+
+- name: '[main] Import Terminal app tasks'
+  import_tasks: terminal_app.yml
+  tags: macterm
+
+- name: '[main] Include iTerm2 tasks'
+  include_tasks: iterm2.yml
+  when: macterm_iterm2
+  tags:
+    - macterm
+    - macterm_iterm2
+
+- name: '[main] Include Fingerprint sensor tasks'
+  include_tasks: fingerprint_sensor.yml
+  when: macterm_fingerprint_sensor
+  tags:
+    - macterm
+    - macterm_fingerprint

@@ -1,0 +1,15 @@
+---
+# handlers file for macterm
+
+# at least on jan6 2019, the osx_defaults module does not allow to READ values (shame).
+# alternatively run 'killall cfprefsd' command
+- name: Read new iTerm profile after copying
+  ansible.builtin.command: defaults read com.googlecode.iterm2
+
+- name: 'Run pinentry-touchid -fix according to brew info pinentry-touchid'
+  ansible.builtin.command: "{{ macterm_brew_prefix.stdout }}/opt/pinentry-touchid/bin/pinentry-touchid -fix"
+  listen: Fix pinentry symlinks
+
+- name: 'Reload gpg-agent with gpg-connect-agent reloadagent /bye'
+  ansible.builtin.command: gpg-connect-agent reloadagent /bye
+  listen: Reload gpg-agent

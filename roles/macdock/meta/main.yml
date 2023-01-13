@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  role_name: macdock
+  author: Andrew Shagayev
+  description: Ansible role for automatic Dock configuration on MacOS.
+  license: MIT
+  min_ansible_version: 1.2
+  platforms:
+    - name: MacOSX
+      versions:
+      - all
+  galaxy_tags:
+    - macos
+    - osx
+    - dock
+    - workstation
