@@ -1,0 +1,109 @@
+---
+# tasks file for ansible-mas
+
+- name: '[mas] Ensure MAS is installed'
+  community.general.homebrew: name=mas state=present
+  register: mas_istall_result
+  until: mas_istall_result is succeeded
+  tags: mas
+
+- name: '[mas] Get correct brew prefix'
+  ansible.builtin.command: 'brew --prefix'
+  environment:
+    PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
+  register: mas_brew_prefix
+  changed_when: false
+  tags: mas
+
+- name: '[mas] Get MAS account status'
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas account"
+  register: mas_account_result
+  failed_when: mas_account_result.rc > 1
+  check_mode: false
+  changed_when: false
+  when: ansible_distribution_version is version('12', '<')
+  tags: mas
+
+# Unfortunately having this issue (Hope it will be fixed soon):
+# https://github.com/mas-cli/mas/issues/164
+- name: '[mas] Sign in to MAS when email and password are provided'
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas signin {{ mas_email }} {{ mas_password }}"
+  register: mas_signin_result
+  when:
+    - ansible_distribution_version is version('10.13', '<')
+    - not mas_signin_dialog
+    - mas_account_result.rc == 1  # should be switched to 0 or make an OR statement
+    - (mas_email)     # https://medium.com/opsops/wft-bool-filter-in-ansible-e7e2fd7a148f
+    - (mas_password)  # https://medium.com/opsops/wft-bool-filter-in-ansible-e7e2fd7a148f
+  tags: mas
+
+- name: '[mas] Sign in to MAS when email is provided, and complete password and 2FA using dialog.'
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas signin {{ mas_email }} {{ mas_password }} --dialog"
+  register: mas_signin_result
+  when:
+    - ansible_distribution_version is version('10.13', '<')
+    - mas_signin_dialog
+    - mas_account_result.rc == 1  # should be switched to 0 or make an OR statement
+    - (mas_email)     # https://medium.com/opsops/wft-bool-filter-in-ansible-e7e2fd7a148f
+  tags: mas
+
+- name: '[mas] List installed MAS apps'
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas list"
+  register: mas_list
+  check_mode: false
+  changed_when: false
+  tags: mas
+
+- name: '[mas] Ensure configured MAS apps are installed'
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas install {{ item.id|default(item) }}"
+  with_items: "{{ mas_installed_apps }}"
+  when: (item.id | default(item) | string) not in mas_list.stdout
+  tags: mas
+
+# community.general.mas module still cannot find the mas binary installed by brew
+# This has to be tested with hosts other then localhost:
+#- name: Ensure configured MAS apps are installed.
+#  community.general.mas:
+#    id: "{{ item.id|default(item) }}"
+#    state: present
+#  with_items: "{{ mas_installed_apps }}"
+#  environment:
+#    PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
+
+- name: '[mas] Upgrade all apps (if configured)'
+  ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas upgrade"
+  when: mas_upgrade_all_apps
+  tags: mas
+
+# Configure AppStore Software update
+- name: '[mas] Determine if softwareupdate should install updates'
+  set_fact:
+    mas_macos_softwareupdate_action: "--install"
+  when: mas_softwareupdate.install
+  tags: mas
+
+- name: '[mas] Determine if softwareupdate should only download updates'
+  set_fact:
+    mas_macos_softwareupdate_action: "--download"
+  when: not mas_softwareupdate.install
+  tags: mas
+
+- name: '[mas] Determine if softwareupdate should install recommended updates only'
+  set_fact:
+    mas_macos_softwareupdate_updates: "--recommended"
+  when: mas_softwareupdate.recommended
+  tags: mas
+
+- name: '[mas] Determine if softwareupdate should install all updates'
+  set_fact:
+    mas_macos_softwareupdate_updates: "--all"
+  when: not mas_softwareupdate.recommended
+  tags: mas
+
+- name: '[mas] Run assembled command'
+  ansible.builtin.command: "{{ 'softwareupdate ' + mas_macos_softwareupdate_action + ' ' + mas_macos_softwareupdate_updates }}"
+  register: softwareupdate_assembled
+  changed_when:
+  - softwareupdate_assembled.rc != 0
+  - not 'No updates are available.' in softwareupdate_assembled.stderr
+  tags: mas

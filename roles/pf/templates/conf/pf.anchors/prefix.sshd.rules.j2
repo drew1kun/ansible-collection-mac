@@ -1,0 +1,10 @@
+#====== TABLES start =====#
+table <ssh_bruteforce> persist
+#======= TABLES end ======#
+
+#==== FILTERING start ====#
+block log quick from <ssh_bruteforce>
+pass in inet proto tcp to any port ssh flags S/SA keep state \
+  (max-src-conn 99, max-src-conn-rate 12/50, \
+  overload <ssh_bruteforce> flush global )
+#===== FILTERING end =====#

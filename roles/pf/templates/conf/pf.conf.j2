@@ -1,0 +1,30 @@
+{% if ansible_os_family == 'Darwin' %}
+#===== OPTIONS start =====#
+# Original pf.conf may be overwritten during system updates,
+# this is why it is included here:
+#include "/etc/pf.conf"
+#====== OPTIONS end ======#
+
+{% endif %}
+{#{% if ansible_os_family != 'Darwin' and pf_translation != None %}#}
+{% if pf_translation != None %}
+#=== TRANSLATION start ===#
+rdr-anchor "{{ pf_prefix }}.rdr"
+load anchor "{{ pf_prefix }}.rdr" from "/etc/pf.anchors/{{ pf_prefix }}.rdr.rules"
+#==== TRANSLATION end ====#
+
+{% endif %}
+#==== FILTERING start ====#
+anchor "{{ pf_prefix }}"
+load anchor "{{ pf_prefix }}" from "/etc/pf.anchors/{{ pf_prefix }}.rules"
+{% if pf_ssh_bruteforce_protect %}
+
+anchor "{{ pf_prefix }}.sshd"
+load anchor "{{ pf_prefix }}.sshd" from "/etc/pf.anchors/{{ pf_prefix }}.sshd.rules"
+{% endif %}
+{% if pf_emerging_threats_protect %}
+
+anchor "{{ pf_prefix }}.eto"
+load anchor "{{ pf_prefix }}.eto" from "/etc/pf.anchors/{{ pf_prefix }}.eto.rules"
+{% endif %}
+#===== FILTERING end =====#

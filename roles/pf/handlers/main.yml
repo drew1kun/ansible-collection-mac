@@ -1,0 +1,39 @@
+---
+# handlers file for ansible-pf
+
+# For some reason native ansible lauchd module does not load the jobs properly.
+# sshd job
+- name: "Unload /Library/LaunchDaemons/{{ pf_prefix }}.pf.ssh-bruteforce.table-expire.plist"
+  ansible.builtin.command: "launchctl unload /Library/LaunchDaemons/{{ pf_prefix }}.pf.ssh-bruteforce.table-expire.plist"
+  become: yes
+  listen: Reload pf.ssh-bruteforce.table-expire plist
+  when: "'Darwin' in ansible_os_family"
+
+- name: "Load /Library/LaunchDaemons/{{ pf_prefix }}.pf.ssh-bruteforce.table-expire.plist"
+  ansible.builtin.command: "launchctl load -w /Library/LaunchDaemons/{{ pf_prefix }}.pf.ssh-bruteforce.table-expire.plist"
+  become: yes
+  listen: Reload pf.ssh-bruteforce.table-expire plist
+  when: "'Darwin' in ansible_os_family"
+
+
+# emerging-threats job
+- name: "Unload /Library/LaunchDaemons/{{ pf_prefix }}.pf.emerging-threats.rules-update.plist"
+  ansible.builtin.command: "launchctl unload /Library/LaunchDaemons/{{ pf_prefix }}.pf.emerging-threats.rules-update.plist"
+  become: yes
+  listen: Reload pf.emerging-threats.rules-update plist
+  when: "'Darwin' in ansible_os_family"
+
+- name: "Load /Library/LaunchDaemons/{{ pf_prefix }}.pf.emerging-threats.rules-update.plist"
+  ansible.builtin.command: "launchctl load -w /Library/LaunchDaemons/{{ pf_prefix }}.pf.emerging-threats.rules-update.plist"
+  become: yes
+  listen: Reload pf.emerging-threats.rules-update plist
+  when: "'Darwin' in ansible_os_family"
+
+# pfctl job
+- name: "Restart /System/Library/LaunchDaemons/{{ pf_prefix }}.pf.plist"
+  community.general.launchd:
+    name: "{{ pf_prefix }}.pf"
+    state: restarted
+  become: true
+  listen: Reload pfctl
+  when: "'Darwin' in ansible_os_family"

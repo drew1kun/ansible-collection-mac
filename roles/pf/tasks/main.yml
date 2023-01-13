@@ -1,0 +1,90 @@
+---
+# tasks file for ansible-pf
+
+- name: "[main] Include {{ ansible_os_family }}-specific tasks"
+  include_tasks: "{{ ansible_os_family | lower }}.yml"
+  tags: pf
+
+- name: "[main] Generate {{ pf_conf }} from template"
+  template:
+    src: conf/pf.conf.j2
+    dest: "{{ pf_conf }}"
+    owner: root
+    group: wheel
+    mode: 0644
+  become: true
+  notify: Reload pfctl
+  tags: pf
+
+- name: "[main] Create /etc/pf.anchors directory if it doesn't exist"
+  file:
+    path: /etc/pf.anchors
+    state: directory
+    owner: root
+    group: wheel
+    mode: 0755
+  become: true
+  tags: pf
+
+- name: "[main] Generate /etc/pf.anchors/{{ pf_prefix }}.rules from template"
+  template:
+    src: conf/pf.anchors/prefix.rules.j2
+    dest: "/etc/pf.anchors/{{ pf_prefix }}.rules"
+    owner: root
+    group: wheel
+    mode: 0644
+  become: true
+  notify: Reload pfctl
+  tags: pf
+
+- name: "[main] Generate /etc/pf.anchors/{{ pf_prefix }}.sshd.rules from template"
+  template:
+    src: conf/pf.anchors/prefix.sshd.rules.j2
+    dest: "/etc/pf.anchors/{{ pf_prefix }}.sshd.rules"
+    owner: root
+    group: wheel
+    mode: 0644
+  become: true
+  notify: Reload pfctl
+  when: pf_ssh_bruteforce_protect
+  tags: pf
+
+- name: "[main] Download Emerging Threads Open Ruleset"
+  get_url:
+    url: http://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt
+    dest: /etc/emerging-Block-IPs.txt
+    owner: root
+    group: wheel
+    mode: 0644
+  become: true
+  notify: Reload pfctl
+  when: pf_emerging_threats_protect
+  tags: pf
+
+- name: "[main] Generate /etc/pf.anchors/{{ pf_prefix }}.eto.rules from template"
+  template:
+    src: conf/pf.anchors/prefix.eto.rules.j2
+    dest: "/etc/pf.anchors/{{ pf_prefix }}.eto.rules"
+    owner: root
+    group: wheel
+    mode: 0644
+  become: true
+  notify: Reload pfctl
+  when: pf_emerging_threats_protect
+  tags: pf
+
+- name: "[main] Generate /etc/pf.anchors/{{ pf_prefix }}.rdr.rules from template"
+  template:
+    src: conf/pf.anchors/prefix.rdr.rules.j2
+    dest: "/etc/pf.anchors/{{ pf_prefix }}.rdr.rules"
+    owner: root
+    group: wheel
+    mode: 0644
+  become: true
+  notify: Reload pfctl
+  when: pf_translation != None
+  tags: pf
+
+- name: "[main] Flush all handlers"
+  meta: flush_handlers
+  tags: pf

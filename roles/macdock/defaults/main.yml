@@ -1,0 +1,59 @@
+---
+# defaults file for ansible-macdock
+# temporarily required for installing dockutil cask
+macdock_become_pass: 'secure_sudo_password'
+
+macdock_hide: false  # Automatically hide/show dock?
+
+macdock_magnify: false  # Use dock magnify effect?
+
+macdock_items_remove_all: false
+
+macdock_remove_items:
+  - Siri
+  - Launchpad
+  - Mail
+  - Contacts
+  - Notes
+  - Reminders
+  - Maps
+  - Photos
+  - Messages
+  - FaceTime
+  - iTunes
+  - iBooks
+  - Calendar
+  - App Store
+
+macdock_add_items:
+  # others section:
+  - name: Applications
+    path: "/Applications"
+    pos: 1
+    section: others
+  # apps section:
+  - name: Safari
+    path: "/Applications/Safari.app"
+    pos: 1
+    section: apps  # `apps | others`. If not specified, it defaults to `apps`
+  - name: Calculator
+    path: "/System/Applications/Calculator.app"
+    pos: 2
+  - name: System Preferences
+    path: "/System/Applications/System Preferences.app"
+    pos: 3
+  - name: Console
+    path: "/System/Applications/Utilities/Console.app"
+    pos: 4
+  - name: Activity Monitor
+    path: "/System/Applications/Utilities/Activity Monitor.app"
+    pos: 5
+  - name: Network Utility
+    path: "/System/Library/CoreServices/Applications/Network Utility.app"
+    pos: 6
+  - name: Screen Sharing
+    path: "/System/Library/CoreServices/Applications/Screen Sharing.app"
+    pos: 7
+  - name: Terminal
+    path: "/System/Applications/Utilities/Terminal.app"
+    pos: 8
