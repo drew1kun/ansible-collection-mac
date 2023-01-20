@@ -11,7 +11,8 @@
   ansible.builtin.git:
     repo: https://github.com/drew1kun/terminal_profiles.git
     dest: /tmp/terminal_profiles
-    version: "{{ macterm_colorscheme | lower() }}"
+    version: "{{ macterm_colorscheme|lower }}"
+    depth: 1
   register: macterm_term_profile_download
   until: macterm_term_profile_download is succeeded
   tags: macterm
