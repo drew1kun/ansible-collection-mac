@@ -7,7 +7,7 @@
   ansible.builtin.command: defaults read com.googlecode.iterm2
 
 - name: 'Run pinentry-touchid -fix according to brew info pinentry-touchid'
-  ansible.builtin.command: "{{ macterm_brew_prefix.stdout }}/opt/pinentry-touchid/bin/pinentry-touchid -fix"
+  ansible.builtin.command: "{{ macterm_brew_prefix.stdout }}/bin/pinentry-touchid -fix"
   listen: Fix pinentry symlinks
 
 - name: 'Reload gpg-agent with gpg-connect-agent reloadagent /bye'

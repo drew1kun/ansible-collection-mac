@@ -10,19 +10,37 @@
   tags: macterm
 
 - name: '[main] Import Terminal app tasks'
-  import_tasks: terminal_app.yml
+  ansible.builtin.import_tasks:
+    file: terminal_app.yml
   tags: macterm
 
 - name: '[main] Include iTerm2 tasks'
-  include_tasks: iterm2.yml
+  ansible.builtin.include_tasks:
+    file: iterm2.yml
+    apply:
+      tags:
+        - macterm
+        - macterm_iterm2
   when: macterm_iterm2
   tags:
     - macterm
     - macterm_iterm2
 
 - name: '[main] Include Fingerprint sensor tasks'
-  include_tasks: fingerprint_sensor.yml
+  ansible.builtin.include_tasks:
+    file: fingerprint_sensor.yml
+    apply:
+      tags:
+        - macterm
+        - macterm_fingerprint
   when: macterm_fingerprint_sensor
   tags:
     - macterm
+    - macterm_fingerprint
+
+- name: '[main] Flush all handlers'
+  ansible.builtin.meta: flush_handlers
+  tags:
+    - macterm
+    - macterm_iterm2
     - macterm_fingerprint
