@@ -5,89 +5,19 @@
   community.general.homebrew_cask:
     name: hpedrorodrigues/tools/dockutil
     state: present
-    sudo_password: "{{ macdock_become_pass }}"
+    sudo_password: "{{ macdock_become_pass|default(omit) }}"
   register: macdock_dockutils_result
   until: macdock_dockutils_result is successful
 
-- name: "[macdock_look] Get info about items to be removed"
-  ansible.builtin.command: "/usr/local/bin/dockutil --find '{{ item }}'"
-  register: macdock_items_remove
-  with_items: "{{ macdock_remove_items }}"
-  changed_when: false
-  failed_when: false
-  check_mode: false
-  when: not macdock_items_remove_all|bool
-  tags:
-    - macdock
-    - macdock_look
-
 - name: "[macdock_look] Remove all dock items"
   ansible.builtin.command: "/usr/local/bin/dockutil --remove all --no-restart"
-  register: macdock_removed_items_task
-  when: macdock_items_remove_all|bool
-  tags:
-    - macdock
-    - macdock_look
-
-- name: "[macdock_look] Remove all unwanted dock items"
-  ansible.builtin.command: "/usr/local/bin/dockutil --remove '{{ item.item }}' --no-restart"
-  with_items: "{{ macdock_items_remove.results }}"
-  loop_control:
-    label: "{{ item.item }}"
-  when:
-    - not macdock_items_remove_all|bool
-    - (item.item ~ " was found in persistent-apps") in item.stdout
-  notify: Restart Dock
-  tags:
-    - macdock
-    - macdock_look
-
-- name: "[macdock_look] Get information on initial setup"
-  ansible.builtin.command: "/usr/local/bin/dockutil --find '{{ item.name }}'"
-  register: macdock_dockutil
-  with_items: "{{ macdock_add_items }}"
-  changed_when: false
-  failed_when: false
-  check_mode: false
-  tags:
-    - macdock
-    - macdock_look
 
 - name: "[macdock_look] Add items to dock"
-  ansible.builtin.command: "/usr/local/bin/dockutil \
-          --add '{{ item.item.path }}' \
-          --position {{ item.item.pos }} \
-          --section {{ item.item.section | default('apps') }} \
-          --no-restart"
-  with_items: "{{ macdock_dockutil.results }}"
-  loop_control:
-    label: "{{ item.item }}"
-  when: (item.item.name ~ " was not found in") in item.stdout
-  notify: Restart Dock
-  tags:
-    - macdock
-    - macdock_look
-
-- name: "[macdock_look] Get information on configured setup"
-  ansible.builtin.command: "/usr/local/bin/dockutil --find '{{ item.name }}'"
-  register: macdock_dockutil_current
+  ansible.builtin.command: >
+    /usr/local/bin/dockutil \
+      --add '{{ item.path }}' \
+      --position {{ item.pos }} \
+      --section {{ item.section | default('apps') }} \
+      --no-restart
   with_items: "{{ macdock_add_items }}"
-  changed_when: false
-  failed_when: false
-  check_mode: false
-  tags:
-    - macdock
-    - macdock_look
-
-- name: "[macdock_look] Moving items"
-  ansible.builtin.command: "/usr/local/bin/dockutil --move '{{ item.item.name }}' --position {{ item.item.pos }} --no-restart"
-  with_items: "{{ macdock_dockutil_current.results }}"
-  loop_control:
-    label: "{{ item.item }}"
-  when:
-    - (item.item.name ~ " was found in persistent-" ~ (item.item.section|default('apps')) ~ " at slot " ~ item.item.pos ~ " in") not in item.stdout
-    - (item.item.name ~ " was not found") not in item.stdout
   notify: Restart Dock
-  tags:
-    - macdock
-    - macdock_look
