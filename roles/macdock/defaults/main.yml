@@ -1,29 +1,12 @@
 ---
 # defaults file for ansible-macdock
-# temporarily required for installing dockutil cask
+
+# temporary solution to https://github.com/kcrawford/dockutil/issues/127
+# This should not be cask in the future and should not require password
 macdock_become_pass: 'secure_sudo_password'
 
 macdock_hide: false  # Automatically hide/show dock?
-
 macdock_magnify: false  # Use dock magnify effect?
-
-macdock_items_remove_all: false
-
-macdock_remove_items:
-  - Siri
-  - Launchpad
-  - Mail
-  - Contacts
-  - Notes
-  - Reminders
-  - Maps
-  - Photos
-  - Messages
-  - FaceTime
-  - iTunes
-  - iBooks
-  - Calendar
-  - App Store
 
 macdock_add_items:
   # others section:
