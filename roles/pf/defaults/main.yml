@@ -2,7 +2,7 @@
 # defaults file for ansible-pf
 
 pf_conf: /etc/pf.conf
-pf_prefix: "{{ ansible_user_id }}"
+pf_domain: com.domain.my
 pf_ssh_bruteforce_protect: true
 pf_emerging_threats_protect: true
 
