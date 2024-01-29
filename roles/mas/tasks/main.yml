@@ -29,9 +29,10 @@
   when:
     - ansible_distribution_version is version('10.13', '<')
     - not mas_signin_dialog
+    - mas_email is trhuthy        # OR use (mas_email) see: https://medium.com/opsops/wft-bool-filter-in-ansible-e7e2fd7a148f
+    - mas_password is truthy
     - mas_account_result.rc == 1  # should be switched to 0 or make an OR statement
-    - (mas_email)     # https://medium.com/opsops/wft-bool-filter-in-ansible-e7e2fd7a148f
-    - (mas_password)  # https://medium.com/opsops/wft-bool-filter-in-ansible-e7e2fd7a148f
+
 
 - name: '[mas] Sign in to MAS when email is provided, and complete password and 2FA using dialog.'
   ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas signin {{ mas_email }} {{ mas_password }} --dialog"
@@ -40,7 +41,7 @@
     - ansible_distribution_version is version('10.13', '<')
     - mas_signin_dialog
     - mas_account_result.rc == 1  # should be switched to 0 or make an OR statement
-    - (mas_email)     # https://medium.com/opsops/wft-bool-filter-in-ansible-e7e2fd7a148f
+    - mas_email is trhuthy        # OR use (mas_email) see: https://medium.com/opsops/wft-bool-filter-in-ansible-e7e2fd7a148f
 
 - name: '[mas] List installed MAS apps'
   ansible.builtin.command: "{{ mas_brew_prefix.stdout }}/bin/mas list"

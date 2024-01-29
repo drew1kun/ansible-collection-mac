@@ -2,8 +2,11 @@
 # tasks file for ansible-pf
 
 - name: "[main] Include {{ ansible_os_family }}-specific tasks"
-  include_tasks: "{{ ansible_os_family | lower }}.yml"
-  tags: pf
+  include_tasks:
+    file: "{{ ansible_os_family | lower }}.yml"
+    apply:
+      tags: ['pf']
+  tags: ['pf']
 
 - name: "[main] Generate {{ pf_conf }} from template"
   template:
@@ -14,7 +17,7 @@
     mode: 0644
   become: true
   notify: Reload pfctl
-  tags: pf
+  tags: ['pf']
 
 - name: "[main] Create /etc/pf.anchors directory if it doesn't exist"
   file:
@@ -24,30 +27,30 @@
     group: wheel
     mode: 0755
   become: true
-  tags: pf
+  tags: ['pf']
 
-- name: "[main] Generate /etc/pf.anchors/{{ pf_prefix }}.rules from template"
+- name: "[main] Generate /etc/pf.anchors/{{ pf_domain }}.rules from template"
   template:
     src: conf/pf.anchors/prefix.rules.j2
-    dest: "/etc/pf.anchors/{{ pf_prefix }}.rules"
+    dest: "/etc/pf.anchors/{{ pf_domain }}.rules"
     owner: root
     group: wheel
     mode: 0644
   become: true
   notify: Reload pfctl
-  tags: pf
+  tags: ['pf']
 
-- name: "[main] Generate /etc/pf.anchors/{{ pf_prefix }}.sshd.rules from template"
+- name: "[main] Generate /etc/pf.anchors/{{ pf_domain }}.sshd.rules from template"
   template:
     src: conf/pf.anchors/prefix.sshd.rules.j2
-    dest: "/etc/pf.anchors/{{ pf_prefix }}.sshd.rules"
+    dest: "/etc/pf.anchors/{{ pf_domain }}.sshd.rules"
     owner: root
     group: wheel
     mode: 0644
   become: true
   notify: Reload pfctl
   when: pf_ssh_bruteforce_protect
-  tags: pf
+  tags: ['pf']
 
 - name: "[main] Download Emerging Threads Open Ruleset"
   get_url:
@@ -59,32 +62,32 @@
   become: true
   notify: Reload pfctl
   when: pf_emerging_threats_protect
-  tags: pf
+  tags: ['pf']
 
-- name: "[main] Generate /etc/pf.anchors/{{ pf_prefix }}.eto.rules from template"
+- name: "[main] Generate /etc/pf.anchors/{{ pf_domain }}.eto.rules from template"
   template:
     src: conf/pf.anchors/prefix.eto.rules.j2
-    dest: "/etc/pf.anchors/{{ pf_prefix }}.eto.rules"
+    dest: "/etc/pf.anchors/{{ pf_domain }}.eto.rules"
     owner: root
     group: wheel
     mode: 0644
   become: true
   notify: Reload pfctl
   when: pf_emerging_threats_protect
-  tags: pf
+  tags: ['pf']
 
-- name: "[main] Generate /etc/pf.anchors/{{ pf_prefix }}.rdr.rules from template"
+- name: "[main] Generate /etc/pf.anchors/{{ pf_domain }}.rdr.rules from template"
   template:
     src: conf/pf.anchors/prefix.rdr.rules.j2
-    dest: "/etc/pf.anchors/{{ pf_prefix }}.rdr.rules"
+    dest: "/etc/pf.anchors/{{ pf_domain }}.rdr.rules"
     owner: root
     group: wheel
     mode: 0644
   become: true
   notify: Reload pfctl
   when: pf_translation != None
-  tags: pf
+  tags: ['pf']
 
 - name: "[main] Flush all handlers"
   meta: flush_handlers
-  tags: pf
+  tags: ['pf']
