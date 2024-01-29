@@ -1,30 +1,27 @@
 {% if ansible_os_family == 'Darwin' %}
-#===== OPTIONS start =====#
-# Original pf.conf may be overwritten during system updates,
-# this is why it is included here:
-#include "/etc/pf.conf"
-#====== OPTIONS end ======#
+#======= OPTIONS - START =======#
+#======= OPTIONS - END =========#
 
 {% endif %}
 {#{% if ansible_os_family != 'Darwin' and pf_translation != None %}#}
 {% if pf_translation != None %}
-#=== TRANSLATION start ===#
-rdr-anchor "{{ pf_prefix }}.rdr"
-load anchor "{{ pf_prefix }}.rdr" from "/etc/pf.anchors/{{ pf_prefix }}.rdr.rules"
-#==== TRANSLATION end ====#
+#===== TRANSLATION - START =====#
+rdr-anchor "{{ pf_domain }}.rdr"
+load anchor "{{ pf_domain }}.rdr" from "/etc/pf.anchors/{{ pf_domain }}.rdr.rules"
+#===== TRANSLATION - END =======#
 
 {% endif %}
-#==== FILTERING start ====#
-anchor "{{ pf_prefix }}"
-load anchor "{{ pf_prefix }}" from "/etc/pf.anchors/{{ pf_prefix }}.rules"
+#====== FILTERING - START ======#
+anchor "{{ pf_domain }}"
+load anchor "{{ pf_domain }}" from "/etc/pf.anchors/{{ pf_domain }}.rules"
 {% if pf_ssh_bruteforce_protect %}
 
-anchor "{{ pf_prefix }}.sshd"
-load anchor "{{ pf_prefix }}.sshd" from "/etc/pf.anchors/{{ pf_prefix }}.sshd.rules"
+anchor "{{ pf_domain }}.sshd"
+load anchor "{{ pf_domain }}.sshd" from "/etc/pf.anchors/{{ pf_domain }}.sshd.rules"
 {% endif %}
 {% if pf_emerging_threats_protect %}
 
-anchor "{{ pf_prefix }}.eto"
-load anchor "{{ pf_prefix }}.eto" from "/etc/pf.anchors/{{ pf_prefix }}.eto.rules"
+anchor "{{ pf_domain }}.eto"
+load anchor "{{ pf_domain }}.eto" from "/etc/pf.anchors/{{ pf_domain }}.eto.rules"
 {% endif %}
-#===== FILTERING end =====#
+#====== FILTERING - END ========#

@@ -1,7 +1,6 @@
 ---
 - name: "[Darwin] Include {{ ansible_os_family }}-specific variables"
   include_vars: darwin.yml
-  tags: pf
 
 - name: '[Darwin] Create /usr/local/bin/firewall.sh script for running PF correctly'
   ansible.builtin.template:
@@ -12,49 +11,45 @@
     mode: 0755
   become: true
   notify: Reload pfctl
-  tags: pf
 
 - name: '[Darwin] Create launchd job for enabling pf at boot'
   ansible.builtin.template:
     src: launchd/prefix.pf.plist.j2
-    dest: "/Library/LaunchDaemons/{{ pf_prefix }}.pf.plist"
+    dest: "/Library/LaunchDaemons/{{ pf_domain }}.pf.plist"
     owner: root
     group: wheel
     mode: 0644
   become: true
   notify: Reload pfctl
-  tags: pf
 
 - name: '[Darwin] Create launchd job for clearing ssh-bruteforce'
   ansible.builtin.template:
     src: launchd/prefix.pf.ssh-bruteforce.table-expire.plist.j2
-    dest: "/Library/LaunchDaemons/{{ pf_prefix }}.pf.ssh-bruteforce.table-expire.plist"
+    dest: "/Library/LaunchDaemons/{{ pf_domain }}.pf.ssh-bruteforce.table-expire.plist"
     owner: root
     group: wheel
     mode: 0644
   become: true
   notify: Reload pf.ssh-bruteforce.table-expire plist
   when: pf_ssh_bruteforce_protect
-  tags: pf
 
 - name: '[Darwin] Create launchd job for updating the emerging-threats'
   ansible.builtin.template:
     src: launchd/prefix.pf.emerging-threats.rules-update.plist.j2
-    dest: "/Library/LaunchDaemons/{{ pf_prefix }}.pf.emerging-threats.rules-update.plist"
+    dest: "/Library/LaunchDaemons/{{ pf_domain }}.pf.emerging-threats.rules-update.plist"
     owner: root
     group: wheel
     mode: 0644
   become: true
   when: pf_emerging_threats_protect
   notify: Reload pf.emerging-threats.rules-update plist
-  tags: pf
 
 # This check is required unconditionally.
 # Even if no files were changed, pf can still be disabled, so we should enable it in this case.
-- name: '[Darwin] Check if {{ pf_prefix }} launchd jobs are loaded (yellow if not)'
+- name: '[Darwin] Check if {{ pf_domain }} launchd jobs are loaded (yellow if not)'
   ansible.builtin.shell: |
     set -o pipefail
-    launchctl list | grep {{ pf_prefix }}
+    launchctl list | grep {{ pf_domain }}
   args:
     executable: /bin/bash
   become: true
