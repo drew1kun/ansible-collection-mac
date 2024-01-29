@@ -1,0 +1,61 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for dnscrypt
+
+# MacOS Pre-tasks:
+- name: "[main] Verify target is macOS"
+  ansible.builtin.assert:
+    that:
+      - ansible_system == "Darwin"
+    fail_msg: "This role supports macOS only."
+  tags: &dnscrypt_proxy_tags
+    - dnscrypt-proxy
+
+- name: "[main] Determine Homebrew prefix"
+  ansible.builtin.command:
+    argv:
+      - brew
+      - --prefix
+  environment:
+    PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
+  register: dnscrypt_proxy_brew_prefix
+  changed_when: false
+  become: false
+  tags: *dnscrypt_proxy_tags
+
+- name: "[main] Set Homebrew prefix"
+  ansible.builtin.set_fact:
+    dnscrypt_proxy_prefix: "{{ dnscrypt_proxy_brew_prefix.stdout }}"
+  tags: *dnscrypt_proxy_tags
+
+
+# Install:
+- name: "[main] Install dnscrypt-proxy using Homebrew"
+  community.general.homebrew:
+    name: dnscrypt-proxy
+    state: present
+    path: "{{ dnscrypt_proxy_prefix }}/bin"
+  become: false
+  tags:
+    - dnscrypt-proxy
+    - dnscrypt-proxy_install
+
+
+# Configure:
+- name: "[main] Configure dnscrypt"
+  ansible.builtin.import_tasks: config.yml
+  become: true
+  tags:
+    - dnscrypt-proxy
+    - dnscrypt-proxy_config
+
+- name: "[main] Provisioning complete"
+  ansible.builtin.debug:
+    msg: |
+      dnscrypt-proxy is provisioned.
+
+      Start it with:
+        sudo brew services start dnscrypt-proxy
+  tags:
+    - dnscrypt-proxy
+    - dnscrypt-proxy_info

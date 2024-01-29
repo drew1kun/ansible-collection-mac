@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: MIT-0
+---
+# defaults file for dnscrypt
+
+dnscrypt_proxy_user: dnscrypt
+dnscrypt_proxy_group: dnscrypt
+
+dnscrypt_proxy_config_file: "{{ dnscrypt_proxy_prefix }}/etc/dnscrypt-proxy.toml"
+dnscrypt_proxy_certs_dir: "{{ dnscrypt_proxy_prefix }}/etc/mtls-certs"
+
+## When dnscrypt_proxy_toml is undefined, no configurations change is made.
+## Remove or comment if default installation config is used.
+# dnscrypt_proxy_toml: |
+  ## /etc/dnscrypt-proxy.toml file with this configuration content will be created.
+  #
+  # HINTS:
+  ## This setup assumes systemd socket activation, thus nothing should listen:
+  # listen_addresses = []
+  #
+  ## Keep this commented if systemd is used for priviledge dropping:
+  # user_name = dnscrypt
+  # ....
