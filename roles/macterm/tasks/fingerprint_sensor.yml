@@ -23,6 +23,7 @@
     group: wheel
     mode: 0444
   become: true
+  become_method: sudo
   when: macterm_pam_reattach_so.stat.exists
 
 # GPG and pinentry using fingerprint
