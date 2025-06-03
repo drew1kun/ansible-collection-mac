@@ -37,6 +37,7 @@
   - Fix pinentry symlinks
   - Reload gpg-agent
   loop:
+    - pinentry  # pinentry-curses (touchid does not play well with Yubikey)
     - pinentry-mac
     - jorgelbg/tap/pinentry-touchid
   loop_control:
@@ -46,10 +47,14 @@
   ansible.builtin.lineinfile:
     path: ~/.gnupg/gpg-agent.conf
     regexp: '^pinentry-program '
-    line: "pinentry-program {{ macterm_brew_prefix.stdout }}/bin/pinentry-touchid"
+    line: "{{ item }}"
   notify:
   - Fix pinentry symlinks
   - Reload gpg-agent
+  loop:
+    - "pinentry-program {{ macterm_brew_prefix.stdout }}/bin/pinentry-curses"
+    - "#pinentry-program {{ macterm_brew_prefix.stdout }}/bin/pinentry-touchid"
+    - "#pinentry-program {{ macterm_brew_prefix.stdout }}/bin/pinentry-mac"
 
 - name: '[fingerprint] Disable "Save in Keychain" in pinentry-mac for pinentry-touchid to work'
   community.general.osx_defaults:
