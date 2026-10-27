@@ -82,7 +82,7 @@ License
 Author Information
 ----
 
- | [e-mail](mailto:)
+drew1kun | [e-mail](mailto:)
 
 [role-badge]: https://img.shields.io/badge/role-drew1kun.macos__terminal-green.svg
 [galaxy-link]: https://galaxy.ansible.com/drew1kun/macterm/

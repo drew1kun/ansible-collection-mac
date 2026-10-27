@@ -1,6 +1,6 @@
 galaxy_info:
   role_name: refind
-  author: 
+  author: drew1kun
   description: Ansible role that installs rEFInd boot manager for UEFI systems.
   license: MIT
   min_ansible_version: 1.9
