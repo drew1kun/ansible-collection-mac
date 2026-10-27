@@ -55,7 +55,7 @@ License
 Author Information
 ----
 
- | [e-mail](mailto:)
+drew1kun | [e-mail](mailto:)
 
 [refind-link]: https://www.rodsbooks.com/refind/
 [role-badge]: https://img.shields.io/badge/role-drew1kun.refind-green.svg
