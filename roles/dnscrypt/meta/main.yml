@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: MIT-0
+---
+galaxy_info:
+  role_name: dnscrypt
+  author: drew1kun
+  description: |
+    Role that installs dnscrypt-proxy and hardens the setup.
+  license: MIT
+  min_ansible_version: '2.1'
+  github_branch: main
+  platforms:
+    - name: MacOSX
+      versions:
+        - all
+  galaxy_tags:
+    - domain
+    - dns
+    - dnscrypt
+    - tls
+    - https
+    - doh
+    - dot
+    - proxy
+    - unix
+    - macos
+dependencies: []

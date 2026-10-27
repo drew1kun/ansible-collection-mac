@@ -1,0 +1,43 @@
+---
+- name: Provision dnscrypt identity for the daemon to be run as
+  become: true
+  tags: &dnscrypt_proxy_tags
+    - dnscrypt-proxy
+    - dnscrypt-proxy_config
+  block:
+    - name: "[config] Create dnscrypt system group"
+      ansible.builtin.group:
+        name: "{{ dnscrypt_proxy_group }}"
+        system: true
+        state: present
+
+    - name: "[config] Create dnscrypt system user"
+      ansible.builtin.user:
+        name: "{{ dnscrypt_proxy_user }}"
+        group: "{{ dnscrypt_proxy_group }}"
+        comment: "dnscrypt daemon user"
+        home: /var/empty
+        shell: /usr/bin/false
+        create_home: false
+        system: true
+        state: present
+
+- name: "[config] Deploy dnscrypt-proxy configuration"
+  ansible.builtin.copy:
+    content: "{{ dnscrypt_proxy_toml }}"
+    dest: "{{ dnscrypt_proxy_config_file }}"
+    mode: '0640'
+    <<: &dnscrypt_permissions_ownership
+      owner: "{{ dnscrypt_proxy_user }}"
+      group: "{{ dnscrypt_proxy_group }}"
+  become: true
+  when: dnscrypt_proxy_toml is defined
+  tags: *dnscrypt_proxy_tags
+
+- name: "[config] Create dnscrypt runtime directory"
+  ansible.builtin.file:
+    path: "{{ dnscrypt_proxy_run_dir }}"
+    state: directory
+    <<: *dnscrypt_permissions_ownership
+    mode: "0750"
+  tags: *dnscrypt_proxy_tags
