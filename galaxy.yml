@@ -1,9 +1,10 @@
+---
 namespace: drew1kun
 name: mac
-version: 1.1.5
+version: 1.1.6
 readme: README.md
 authors:
--  <>
+  - drew1kun <snub-museum-body@duck.com>
 description: Ansible Collection of roles for programmatic MacOS workstation configuration.
 
 # The path to the license file for the collection. This path is relative to the root of the collection. This key is

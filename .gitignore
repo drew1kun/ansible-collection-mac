@@ -1,7 +1,32 @@
-*.key
-*.swp
-.DS_Store
+# Ansible
+.ansible/
 *.retry
-*.tar.gz
 ansible.cfg
-collections
+test/results/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# macOS
+.DS_Store
+
+# Editors
+*.swp
+*.swo
+*~
+
+# Secrets
+*.key
+*.pem
+*.p12
+*.pfx
+*.vault_pass
+
+# Archives
+*.tar.gz
+
+# Ansible Galaxy
+/collections/
